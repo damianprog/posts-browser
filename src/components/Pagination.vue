@@ -2,15 +2,15 @@
   <ul class="pagination">
     <li>
       <button
-        :disabled="isPageOutOfRange(currentPage - 1)"
-        @click="onPageClick(currentPage - 1)"
+        :disabled="isPageOutOfRange(selectedPage - 1)"
+        @click="onPageClick(selectedPage - 1)"
       >
         {{ "<" }}
       </button>
     </li>
     <li v-for="pageNumber in pagesQuantity" :key="getPageKey(pageNumber)">
       <button
-        :class="{ selected: pageNumber === currentPage }"
+        :class="{ selected: pageNumber === selectedPage }"
         @click="onPageClick(pageNumber)"
       >
         {{ pageNumber }}
@@ -18,8 +18,8 @@
     </li>
     <li>
       <button
-        :disabled="isPageOutOfRange(currentPage + 1)"
-        @click="onPageClick(currentPage + 1)"
+        :disabled="isPageOutOfRange(selectedPage + 1)"
+        @click="onPageClick(selectedPage + 1)"
       >
         {{ ">" }}
       </button>
@@ -36,12 +36,10 @@ export default {
       type: Number,
       default: 1,
     },
-  },
-
-  data() {
-    return {
-      currentPage: 1,
-    };
+    selectedPage: {
+      type: Number,
+      default: 1,
+    },
   },
 
   methods: {
@@ -52,7 +50,6 @@ export default {
       return pageNumber < 1 || pageNumber > this.pagesQuantity;
     },
     onPageClick(pageNumber) {
-      this.currentPage = pageNumber;
       this.$emit("change", pageNumber);
     },
   },
@@ -63,9 +60,13 @@ export default {
 .pagination {
   display: flex;
   list-style-type: none;
+  flex-wrap: wrap;
+  padding: 0;
+
   li {
-    margin: 0 3px;
+    margin: 3px;
   }
+
   button {
     background: none;
     color: inherit;
