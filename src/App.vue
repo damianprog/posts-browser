@@ -5,7 +5,6 @@
 
 <script>
 import AppHeader from "./components/AppHeader.vue";
-import axios from "axios";
 
 export default {
   name: "App",
@@ -18,48 +17,11 @@ export default {
     };
   },
 
-  methods: {
-    getObjectData(object) {
-      let objectData = [];
-
-      if (object && object.data) {
-        objectData = object.data;
-      }
-
-      return objectData;
-    },
-    async fetchPosts() {
-      const fetchedPosts = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-
-      const fetchedPostsData = this.getObjectData(fetchedPosts);
-
-      return fetchedPostsData;
-    },
-    async fetchUsers() {
-      const fetchedUsers = await axios.get(
-        "https://jsonplaceholder.typicode.com/users"
-      );
-
-      const fetchedUsersData = this.getObjectData(fetchedUsers);
-
-      return fetchedUsersData;
-    },
-  },
-
   async mounted() {
-    try {
-      const posts = await this.fetchPosts();
-      this.$store.commit("setPosts", posts);
+    await this.$store.dispatch("setPosts");
+    await this.$store.dispatch("setUsers");
 
-      const users = await this.fetchUsers();
-      this.$store.commit("setUsers", users);
-
-      this.loading = false;
-    } catch (error) {
-      console.log("Fetching data failed...", error);
-    }
+    this.loading = false;
   },
 };
 </script>

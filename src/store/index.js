@@ -1,4 +1,7 @@
 import { createStore } from 'vuex';
+import { RepositoryFactory } from '../api/repository-factory.js';
+const PostsRepository = RepositoryFactory.get('posts');
+const UsersRepository = RepositoryFactory.get('users');
 
 export default createStore({
   state: {
@@ -19,6 +22,22 @@ export default createStore({
         (post) => post.id !== Number(postId)
       );
       state.posts = filteredPosts;
+    },
+  },
+  actions: {
+    async setPosts({ commit }) {
+      let posts = await PostsRepository.get();
+
+      if (!posts) posts = [];
+
+      commit('setPosts', posts);
+    },
+    async setUsers({ commit }) {
+      let users = await UsersRepository.get();
+
+      if (!users) users = [];
+
+      commit('setUsers', users);
     },
   },
   getters: {
