@@ -1,8 +1,8 @@
 <template>
   <div class="posts-list">
     <div class="filters">
-      <users-select @selectUser="onSelectUser($event)" />
-      <search @textInput="onSearchInput($event)" />
+      <users-select @selectUser="onSelectUser" />
+      <search @textInput="onSearchInput" />
     </div>
     <div v-if="filteredPosts.length > 0" class="posts-list-items">
       <posts-list-post
@@ -17,7 +17,7 @@
       <pagination
         :pagesQuantity="pagesQuantity"
         :selectedPage="currentPage"
-        @change="changePage($event)"
+        @change="changePage"
       />
     </div>
   </div>
@@ -49,11 +49,10 @@ export default {
     posts() {
       return this.$store.state.posts;
     },
+
     filteredPosts() {
-      const filteredPosts = this.posts.filter(
-        (post) =>
-          post.title.includes(this.filters.title) &&
-          (this.filters.userId === "" || post.userId === this.filters.userId)
+      const filteredPosts = this.posts.filter((post) =>
+        this.validatePostAgainstFilters(post)
       );
 
       return filteredPosts;
@@ -87,6 +86,22 @@ export default {
     onSelectUser(user) {
       this.filters.userId = user ? user.id : "";
       this.changePage(1);
+    },
+    isTextFromFiltersInPostTitle(title) {
+      return title.includes(this.filters.title);
+    },
+    isUserFromFiltersPostAuthor(postAuthorId) {
+      return postAuthorId === this.filters.userId;
+    },
+    validatePostAgainstFilters(post) {
+      const isTextValid = this.isTextFromFiltersInPostTitle(post.title);
+
+      const isFilterUserIdEmpty = this.filters.userId === "";
+      const isUserValid = isFilterUserIdEmpty
+        ? true
+        : this.isUserFromFiltersPostAuthor(post.userId);
+
+      return isTextValid && isUserValid;
     },
   },
 };
